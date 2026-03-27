@@ -1,0 +1,5 @@
+{
+    "name": "help",
+    "description": "Shows available commands",
+    "dm_permission": false
+}

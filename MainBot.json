@@ -1,0 +1,35 @@
+{
+    "prefix": "!",
+    "intents": [
+        "Guilds",
+        "GuildMessages",
+        "DirectMessages",
+        "MessageContent"
+    ],
+    "commands": {
+        "ping": {
+            "description": "Responds with pong",
+            "enabled": true
+        },
+        "help": {
+            "description": "Shows available commands",
+            "enabled": true
+        },
+        "purge": {
+            "description": "Purges active time-limited invites",
+            "enabled": true
+        },
+        "ban": {
+            "description": "Bans a user from the server",
+            "enabled": true
+        },
+        "kick": {
+            "description": "Kicks a user from the server",
+            "enabled": true
+        }
+    },
+    "settings": {
+        "debug": false,
+        "logLevel": "info"
+    }
+}
