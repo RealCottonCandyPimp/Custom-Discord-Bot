@@ -1,0 +1,14 @@
+{
+    "name": "purge",
+    "description": "Purge time-limited invites from the server",
+    "default_member_permissions": "32",
+    "dm_permission": false,
+    "options": [
+        {
+            "name": "confirm",
+            "description": "Confirm invite purge action",
+            "type": 5,
+            "required": true
+        }
+    ]
+}
