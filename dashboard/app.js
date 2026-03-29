@@ -128,16 +128,22 @@ function createDashboardApp({ client, pool, config }) {
                 return;
             }
             const user = await fetchDiscordUser(accessToken);
-            req.session.discordAccessToken = accessToken;
-            req.session.discordUser = {
-                id: user.id,
-                username: user.username,
-                global_name: user.global_name,
-                avatar: user.avatar,
-                discriminator: user.discriminator
-            };
-            delete req.session.guildsCache;
-            res.redirect("/");
+            req.session.regenerate((regenErr) => {
+                if (regenErr) {
+                    console.error("Session regenerate after OAuth:", regenErr);
+                    res.status(500).send("Login failed. Could not create session.");
+                    return;
+                }
+                req.session.discordAccessToken = accessToken;
+                req.session.discordUser = {
+                    id: user.id,
+                    username: user.username,
+                    global_name: user.global_name,
+                    avatar: user.avatar,
+                    discriminator: user.discriminator
+                };
+                res.redirect("/");
+            });
         } catch (err) {
             console.error("OAuth callback error:", err);
             res.status(500).send("Login failed. Check server logs.");
