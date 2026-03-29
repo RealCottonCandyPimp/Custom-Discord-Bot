@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bot dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+    <div class="layout">
+        <header class="header">
+            <h1>Bot dashboard</h1>
+            <div class="header-actions" id="auth-area">
+                <span class="muted" id="user-label"></span>
+                <a class="btn primary" id="login-btn" href="/auth/discord">Log in with Discord</a>
+                <button type="button" class="btn" id="logout-btn" hidden>Log out</button>
+            </div>
+        </header>
+
+        <main class="main">
+            <section id="gate" class="card">
+                <p class="muted">Sign in with Discord to manage servers where you have <strong>Manage Server</strong> and where the bot is present.</p>
+            </section>
+
+            <section id="app-panel" hidden>
+                <div class="grid two">
+                    <div class="card">
+                        <h2>Server</h2>
+                        <label class="field">
+                            <span>Select server</span>
+                            <select id="guild-select"></select>
+                        </label>
+                        <p class="muted small" id="guild-hint">Choose a server to load its settings.</p>
+                    </div>
+                    <div class="card">
+                        <h2>Command prefix</h2>
+                        <p class="muted small">Stored per server. Slash commands use <code>/</code>; this value is kept for consistency and any prefix-based features you add later.</p>
+                        <label class="field">
+                            <span>Prefix</span>
+                            <input type="text" id="prefix-input" maxlength="16" autocomplete="off" />
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Commands</h2>
+                    <p class="muted small">Toggle whether each command can run in this server.</p>
+                    <div id="commands-list" class="commands"></div>
+                </div>
+
+                <div class="actions">
+                    <button type="button" class="btn primary" id="save-btn">Save changes</button>
+                    <span class="status" id="save-status" aria-live="polite"></span>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/dashboard.js"></script>
+</body>
+</html>
