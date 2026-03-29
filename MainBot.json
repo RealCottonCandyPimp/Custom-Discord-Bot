@@ -19,12 +19,24 @@
             "description": "Purges active time-limited invites",
             "enabled": true
         },
+        "message-purge": {
+            "description": "Message Purge — delete all messages in the current channel",
+            "enabled": true
+        },
         "ban": {
             "description": "Bans a user from the server",
             "enabled": true
         },
         "kick": {
             "description": "Kicks a user from the server",
+            "enabled": true
+        },
+        "template": {
+            "description": "Save server roles, categories, and channels as a template",
+            "enabled": true
+        },
+        "restore": {
+            "description": "Restore server from the last saved template",
             "enabled": true
         }
     },

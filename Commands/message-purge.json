@@ -1,0 +1,14 @@
+{
+    "name": "message-purge",
+    "description": "Message Purge — delete all messages in this channel",
+    "default_member_permissions": "8192",
+    "dm_permission": false,
+    "options": [
+        {
+            "name": "confirm",
+            "description": "Confirm you want to delete all messages here",
+            "type": 5,
+            "required": true
+        }
+    ]
+}

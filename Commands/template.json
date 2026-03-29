@@ -1,0 +1,15 @@
+{
+    "name": "template",
+    "description": "Save this server's roles, categories, and channels as a restorable template",
+    "default_member_permissions": "32",
+    "dm_permission": false,
+    "options": [
+        {
+            "name": "share_key",
+            "description": "Optional name to publish this snapshot for /restore on other servers",
+            "type": 3,
+            "required": false,
+            "max_length": 50
+        }
+    ]
+}

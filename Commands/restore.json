@@ -1,0 +1,21 @@
+{
+    "name": "restore",
+    "description": "Restore this server from the last saved template (destructive)",
+    "default_member_permissions": "32",
+    "dm_permission": false,
+    "options": [
+        {
+            "name": "confirm",
+            "description": "Type true to confirm replacing channels and custom roles",
+            "type": 5,
+            "required": true
+        },
+        {
+            "name": "from_key",
+            "description": "Restore from a shared template key (from another server) instead of local save",
+            "type": 3,
+            "required": false,
+            "max_length": 50
+        }
+    ]
+}

@@ -5,8 +5,10 @@ const { requireEnvVars } = require("./env");
 
 const config = require("./MainBot.json");
 const { handlePurgeCommand } = require("./Handlers/purge");
+const { handleMessagePurgeCommand } = require("./Handlers/messagePurge");
 const { handleBanCommand } = require("./Handlers/ban");
 const { handleKickCommand } = require("./Handlers/kick");
+const { handleTemplateCommand, handleRestoreCommand } = require("./Handlers/templateRestore");
 const { DISCORD_TOKEN: botToken } = requireEnvVars(["DISCORD_TOKEN"], "bot startup");
 const commandPermissionRequirements = {
     ban: {
@@ -18,6 +20,18 @@ const commandPermissionRequirements = {
         message: "You need the Kick Members permission to use this command."
     },
     purge: {
+        permission: PermissionFlagsBits.ManageGuild,
+        message: "You need the Manage Server permission to use this command."
+    },
+    "message-purge": {
+        permission: PermissionFlagsBits.ManageMessages,
+        message: "You need the Manage Messages permission to use this command."
+    },
+    template: {
+        permission: PermissionFlagsBits.ManageGuild,
+        message: "You need the Manage Server permission to use this command."
+    },
+    restore: {
         permission: PermissionFlagsBits.ManageGuild,
         message: "You need the Manage Server permission to use this command."
     }
@@ -92,6 +106,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
             return;
         }
 
+        if (interaction.commandName === "message-purge") {
+            await handleMessagePurgeCommand(interaction);
+            return;
+        }
+
         if (interaction.commandName === "ban") {
             await handleBanCommand(interaction);
             return;
@@ -99,6 +118,16 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
         if (interaction.commandName === "kick") {
             await handleKickCommand(interaction);
+            return;
+        }
+
+        if (interaction.commandName === "template") {
+            await handleTemplateCommand(interaction);
+            return;
+        }
+
+        if (interaction.commandName === "restore") {
+            await handleRestoreCommand(interaction);
             return;
         }
     } catch (error) {
