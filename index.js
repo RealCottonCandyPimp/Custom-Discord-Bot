@@ -12,6 +12,8 @@ const { handleMessagePurgeCommand } = require("./Handlers/messagePurge");
 const { handleBanCommand } = require("./Handlers/ban");
 const { handleKickCommand } = require("./Handlers/kick");
 const { handleTemplateCommand, handleRestoreCommand } = require("./Handlers/templateRestore");
+const { handleRankCommand } = require("./Handlers/rank");
+const { awardMessageXp, getRoleIdsForLevelsCrossed } = require("./lib/xpService");
 
 const { DISCORD_TOKEN: botToken } = requireEnvVars(
     [
@@ -68,6 +70,43 @@ const client = new Client({
 });
 
 let pool;
+
+async function grantXpLevelRoles(message, settings, oldLevel, newLevel) {
+    const roleIds = getRoleIdsForLevelsCrossed(oldLevel, newLevel, settings.xp.levelRoles);
+    if (roleIds.length === 0) {
+        return;
+    }
+    const guild = message.guild;
+    const me = guild.members.me;
+    if (!me) {
+        return;
+    }
+    const botHigh = me.roles.highest;
+    const member =
+        message.member ?? (await guild.members.fetch(message.author.id).catch(() => null));
+    if (!member) {
+        return;
+    }
+    for (const rid of roleIds) {
+        if (member.roles.cache.has(rid)) {
+            continue;
+        }
+        const role =
+            guild.roles.cache.get(rid) ?? (await guild.roles.fetch(rid).catch(() => null));
+        if (!role || role.managed) {
+            continue;
+        }
+        if (role.position >= botHigh.position) {
+            continue;
+        }
+        try {
+            await member.roles.add(role, "XP level reward");
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            console.error(`XP level role ${rid}:`, msg);
+        }
+    }
+}
 
 async function isCommandEnabledForContext(interaction, commandName) {
     const defaults = guildSettings.buildDefaults(config);
@@ -185,6 +224,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await handleRestoreCommand(interaction);
             return;
         }
+
+        if (interaction.commandName === "rank") {
+            await handleRankCommand(interaction, pool, config);
+            return;
+        }
     } catch (error) {
         console.error("Error handling interaction:", error);
 
@@ -200,6 +244,24 @@ client.on(Events.InteractionCreate, async (interaction) => {
             content: "Something went wrong while running that command.",
             ephemeral: true
         });
+    }
+});
+
+client.on(Events.MessageCreate, async (message) => {
+    try {
+        if (!message.guild || message.author.bot || message.system || message.webhookId) {
+            return;
+        }
+        const settings = await guildSettings.getGuildSettings(pool, message.guild.id, config);
+        if (!settings.xp.enabled) {
+            return;
+        }
+        const result = await awardMessageXp(pool, message.guild.id, message.author.id, settings);
+        if (result.leveledUp) {
+            await grantXpLevelRoles(message, settings, result.oldLevel, result.level);
+        }
+    } catch (err) {
+        console.error("MessageCreate (XP):", err);
     }
 });
 

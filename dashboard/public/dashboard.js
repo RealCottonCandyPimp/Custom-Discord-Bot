@@ -8,6 +8,12 @@ const logoutBtn = document.getElementById("logout-btn");
 const userLabel = document.getElementById("user-label");
 const appPanel = document.getElementById("app-panel");
 const gate = document.getElementById("gate");
+const xpEnabled = document.getElementById("xp-enabled");
+const xpPerMessage = document.getElementById("xp-per-message");
+const xpPerLevel = document.getElementById("xp-per-level");
+const xpDailyCap = document.getElementById("xp-daily-cap");
+const xpLevelRolesList = document.getElementById("xp-level-roles-list");
+const xpLevelRolesAdd = document.getElementById("xp-level-roles-add");
 
 let currentGuildId = null;
 let descriptions = {};
@@ -64,12 +70,91 @@ function renderCommands(commands) {
     }
 }
 
+function addLevelRoleRow(entry = {}) {
+    const row = document.createElement("div");
+    row.className = "level-role-row";
+
+    const levelWrap = document.createElement("label");
+    levelWrap.className = "field compact";
+    const levelSpan = document.createElement("span");
+    levelSpan.textContent = "Level";
+    const levelInput = document.createElement("input");
+    levelInput.type = "number";
+    levelInput.min = "2";
+    levelInput.max = "1000000";
+    levelInput.step = "1";
+    levelInput.dataset.field = "level";
+    levelInput.value = entry.level != null && entry.level !== "" ? String(entry.level) : "";
+    levelWrap.appendChild(levelSpan);
+    levelWrap.appendChild(levelInput);
+
+    const roleWrap = document.createElement("label");
+    roleWrap.className = "field compact";
+    const roleSpan = document.createElement("span");
+    roleSpan.textContent = "Role ID";
+    const roleInput = document.createElement("input");
+    roleInput.type = "text";
+    roleInput.autocomplete = "off";
+    roleInput.placeholder = "e.g. 123456789012345678";
+    roleInput.dataset.field = "roleId";
+    roleInput.value = entry.roleId != null ? String(entry.roleId) : "";
+    roleWrap.appendChild(roleSpan);
+    roleWrap.appendChild(roleInput);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "btn icon-only";
+    removeBtn.textContent = "✕";
+    removeBtn.title = "Remove";
+    removeBtn.addEventListener("click", () => {
+        row.remove();
+    });
+
+    row.appendChild(levelWrap);
+    row.appendChild(roleWrap);
+    row.appendChild(removeBtn);
+    xpLevelRolesList.appendChild(row);
+}
+
+function renderLevelRoles(levelRoles) {
+    xpLevelRolesList.innerHTML = "";
+    const list = Array.isArray(levelRoles) ? levelRoles : [];
+    for (const r of list) {
+        addLevelRoleRow({ level: r.level, roleId: r.roleId });
+    }
+}
+
+function collectLevelRoles() {
+    const out = [];
+    for (const row of xpLevelRolesList.querySelectorAll(".level-role-row")) {
+        const levelInput = row.querySelector('input[data-field="level"]');
+        const roleInput = row.querySelector('input[data-field="roleId"]');
+        const levelStr = (levelInput?.value ?? "").trim();
+        const roleId = (roleInput?.value ?? "").trim();
+        if (levelStr === "" && roleId === "") {
+            continue;
+        }
+        out.push({ level: Number(levelStr), roleId });
+    }
+    return out;
+}
+
+xpLevelRolesAdd.addEventListener("click", () => {
+    addLevelRoleRow({});
+});
+
 async function loadGuildSettings(guildId) {
     setStatus("Loading…", null);
     const data = await fetchJson(`/api/guilds/${guildId}/settings`);
     descriptions = data.descriptions || {};
     prefixInput.value = data.settings.prefix || "";
     renderCommands(data.settings.commands);
+    const x = data.settings.xp || {};
+    xpEnabled.checked = Boolean(x.enabled);
+    xpPerMessage.value = String(x.perMessage ?? 15);
+    xpPerLevel.value = String(x.perLevel ?? 100);
+    xpDailyCap.value = String(x.dailyCap ?? 500);
+    renderLevelRoles(x.levelRoles);
     setStatus("", null);
 }
 
@@ -142,7 +227,14 @@ saveBtn.addEventListener("click", async () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 prefix: prefixInput.value,
-                commands
+                commands,
+                xp: {
+                    enabled: xpEnabled.checked,
+                    perMessage: Number(xpPerMessage.value),
+                    perLevel: Number(xpPerLevel.value),
+                    dailyCap: Number(xpDailyCap.value),
+                    levelRoles: collectLevelRoles()
+                }
             })
         });
         setStatus("Saved.", "ok");

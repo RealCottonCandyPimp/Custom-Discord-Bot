@@ -48,6 +48,41 @@
                     <div id="commands-list" class="commands"></div>
                 </div>
 
+                <div class="card">
+                    <h2>XP and levels</h2>
+                    <p class="muted small">
+                        Members earn XP from messages in this server. Level is <code>1 + floor(total XP ÷ XP per level)</code>.
+                        Use <code>0</code> for daily cap to mean no limit. Daily totals reset on UTC midnight.
+                    </p>
+                    <div class="field toggle-row">
+                        <span>Enable XP from messages</span>
+                        <label class="toggle inline">
+                            <input type="checkbox" id="xp-enabled" />
+                            <span>Enabled</span>
+                        </label>
+                    </div>
+                    <label class="field">
+                        <span>XP per message (1–1000)</span>
+                        <input type="number" id="xp-per-message" min="1" max="1000" step="1" />
+                    </label>
+                    <label class="field">
+                        <span>XP required per level (1–1,000,000)</span>
+                        <input type="number" id="xp-per-level" min="1" max="1000000" step="1" />
+                    </label>
+                    <label class="field">
+                        <span>Daily XP cap per member (0 = unlimited, max 100,000,000)</span>
+                        <input type="number" id="xp-daily-cap" min="0" max="100000000" step="1" />
+                    </label>
+                    <h3 class="subheading">Level roles</h3>
+                    <p class="muted small">
+                        When someone’s level reaches a threshold you add here, the bot assigns that Discord role (same instant as the level-up, from chat XP).
+                        The bot’s top role must be <strong>above</strong> reward roles in Server Settings → Roles, and the bot needs <strong>Manage Roles</strong>.
+                        Paste each role’s numeric ID (Developer Mode → right‑click role → Copy Role ID). Up to 50 rules; each level number must be unique. Use level <strong>2</strong> or higher (everyone starts at level 1).
+                    </p>
+                    <div id="xp-level-roles-list" class="level-roles-list"></div>
+                    <button type="button" class="btn" id="xp-level-roles-add">Add level role</button>
+                </div>
+
                 <div class="actions">
                     <button type="button" class="btn primary" id="save-btn">Save changes</button>
                     <span class="status" id="save-status" aria-live="polite"></span>

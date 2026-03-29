@@ -214,7 +214,10 @@ function createDashboardApp({ client, pool, config }) {
             res.json({ settings });
         } catch (err) {
             const message = err instanceof Error ? err.message : "Update failed";
-            const status = message.includes("Unknown command") || message.includes("prefix") ? 400 : 500;
+            const status =
+                message.includes("Unknown command") || message.includes("prefix") || message.includes("xp.")
+                    ? 400
+                    : 500;
             res.status(status).json({ error: message });
         }
     });

@@ -1,0 +1,13 @@
+{
+    "name": "rank",
+    "description": "Show your XP and level in this server",
+    "options": [
+        {
+            "name": "user",
+            "description": "Member to look up (optional)",
+            "type": 6,
+            "required": false
+        }
+    ],
+    "dm_permission": false
+}

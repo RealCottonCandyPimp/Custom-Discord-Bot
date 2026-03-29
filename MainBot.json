@@ -2,6 +2,7 @@
     "prefix": "!",
     "intents": [
         "Guilds",
+        "GuildMembers",
         "GuildMessages",
         "DirectMessages",
         "MessageContent"
@@ -38,7 +39,18 @@
         "restore": {
             "description": "Restore server from the last saved template",
             "enabled": true
+        },
+        "rank": {
+            "description": "Show your XP and level in this server",
+            "enabled": true
         }
+    },
+    "xp": {
+        "enabled": false,
+        "perMessage": 15,
+        "perLevel": 100,
+        "dailyCap": 500,
+        "levelRoles": []
     },
     "settings": {
         "debug": false,
